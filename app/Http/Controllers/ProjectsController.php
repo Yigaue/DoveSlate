@@ -24,8 +24,13 @@ class ProjectsController extends Controller
             'description' => 'required',
         ]);
 
-        Project::create($attributes);
+        // We don't' need validate the authenticated user
 
+    //    $attributes['owner_id'] = auth()->id();
+
+       auth()->user()->projects()->create($attributes);
+
+       //  Project::create($attributes);
         // Project::create(request(['title', 'description']));
 
 
@@ -36,7 +41,7 @@ class ProjectsController extends Controller
     public function show(Project $project)
     {
         // $project = Project::findOrFail(request('project'));
-        
+
         return view('projects.show', compact('project'));
     }
 }
