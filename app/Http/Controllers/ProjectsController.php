@@ -9,7 +9,9 @@ class ProjectsController extends Controller
 {
     public function index()
     {
-     $projects = Project::all();
+
+        $projects = auth()->user()->projects;
+     //$projects = Project::all();
 
     return view('projects.index', compact('projects'));
 
@@ -40,6 +42,16 @@ class ProjectsController extends Controller
 
     public function show(Project $project)
     {
+        $message = ['abort' =>"Please this project belongs to someone, you're not allowed biko!"
+
+                    ];
+
+        // if(auth()->id() !== $project->owner_id)
+        // just below is the alternative way of implementing the just above line
+        if(auth()->user()->isNot($project->owner))
+        {
+            abort(403, $message['abort']);
+        }
         // $project = Project::findOrFail(request('project'));
 
         return view('projects.show', compact('project'));
