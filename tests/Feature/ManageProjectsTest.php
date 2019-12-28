@@ -9,40 +9,58 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 
 
-class ProjectsTest extends TestCase
+class ManageProjectsTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
 
     /** @test */
 
-    public function guest_cannot_create_projects()
+    public function guest_cannot_manage_projects()
+    //This test just above and below was rename after merging of the three guest related test into one
+    //public function guest_cannot_create_projects()
 
     {
-      // $this->withoutExceptionHandling();
+        // this line just below was uncommented to and cast to array because
+        // the diff between create() and raw() is raw() returns array while create() returns object
 
-        $attributes = factory('App\Project')->raw();
+        // $attributes = factory('App\Project')->raw();
 
-        $this->post('/projects', $attributes)->assertRedirect('login');
-    }
+         $project = factory('App\Project')->create();
 
-    /** @test */
-    public function guest_cannot_view_projects()
-    {
+        $this->get('/projects/create')->assertRedirect('login');
 
         $this->get('/projects')->assertRedirect('login');
-    }
-
-    /** @test */
-
-    public function guest_cannot_view_single_project()
-
-    {
-
-        $project = factory('App\Project')->create();
 
         $this->get($project->path())->assertRedirect('login');
+
+        $this->post('/projects', $project->toArray())->assertRedirect('login');
+
+
+
     }
+
+    // /** @test */
+    // public function guest_cannot_view_projects()
+    // {
+    //     // the line just below was moved/merge to guests_cannot_create_project
+
+    //     // $this->get('/projects')->assertRedirect('login');
+    // }
+
+    // /** @test */
+
+    // public function guest_cannot_view_single_project()
+
+    // {
+    //     // the line just below was moved/merged to guests_cannot_create_project
+    //     // $project = factory('App\Project')->create();
+
+
+    //     // the line just below was moved/merged to guests_cannot_create_project
+
+    //     // $this->get($project->path())->assertRedirect('login');
+    // }
 
     /** @test */
 
@@ -52,7 +70,9 @@ class ProjectsTest extends TestCase
 
         $this->withoutExceptionHandling();
 
-    $this->actingAs(factory('App\User')->create());
+        $this->actingAs(factory('App\User')->create());
+
+        $this->get('/projects/create')->assertStatus(200);
 
         $attributes = [
             'title' => $this->faker->sentence,
