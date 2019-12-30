@@ -24,8 +24,15 @@
             {{-- tasks --}}
             @foreach ($project->tasks as $task)
                 <div class="bg-white p-4 rounded-lg shadow-md mb-3">{{$task->body}}</div>
-            @endforeach
 
+            @endforeach
+            <div class="bg-white p-4 rounded-lg shadow-md mb-3">
+
+                    <form action="{{$project->path() . '/tasks'}}" method="POST">
+                        @csrf
+                        <input type="text" placeholder=" Add a new task" class="w-full" name="body">
+                    </form>
+                </div>
          </div>
 
          <div>
