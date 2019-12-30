@@ -36,14 +36,12 @@ class ManageProjectsTest extends TestCase
 
         $this->post('/projects', $project->toArray())->assertRedirect('login');
 
-
-
     }
 
     // /** @test */
     // public function guest_cannot_view_projects()
     // {
-    //     // the line just below was moved/merge to guests_cannot_create_project
+    //     // the line just below was moved/merge to guests_cannot_manage_project
 
     //     // $this->get('/projects')->assertRedirect('login');
     // }
@@ -53,11 +51,11 @@ class ManageProjectsTest extends TestCase
     // public function guest_cannot_view_single_project()
 
     // {
-    //     // the line just below was moved/merged to guests_cannot_create_project
+    //     // the line just below was moved/merged to guests_cannot_manage_project
     //     // $project = factory('App\Project')->create();
 
 
-    //     // the line just below was moved/merged to guests_cannot_create_project
+    //     // the line just below was moved/merged to guests_cannot_manage_project
 
     //     // $this->get($project->path())->assertRedirect('login');
     // }
@@ -77,9 +75,7 @@ class ManageProjectsTest extends TestCase
         $attributes = [
             'title' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
-
         ];
-
 
         $this->post('/projects', $attributes)
         ->assertRedirect('/projects');
@@ -94,6 +90,7 @@ class ManageProjectsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
+        // 'be' is same as actingAs: the signin user
         $this->be(factory('App\User')->create());
 
         $project = factory('App\Project')->create(['owner_id' => auth()->id()]);
@@ -120,6 +117,7 @@ class ManageProjectsTest extends TestCase
     /** @test */
 
     public function a_project_requires_a_title()
+
     {
         // the raw(['title=>'']) attached to the end of the factory overides the title attribute
         // in the factory('App\Project);
@@ -145,4 +143,3 @@ class ManageProjectsTest extends TestCase
     }
 
 }
-
