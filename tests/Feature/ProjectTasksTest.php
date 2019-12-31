@@ -80,7 +80,7 @@ class ProjectTasksTest extends TestCase
 
    public function a_task_can_be_updated()
    {
-       $this->withoutExceptionHandling();
+      // $this->withoutExceptionHandling();
 
        $this->signIn();
 

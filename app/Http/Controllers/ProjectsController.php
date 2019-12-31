@@ -24,7 +24,9 @@ class ProjectsController extends Controller
         [
             'title' => 'required',
             'description' => 'required',
+            'notes'=> 'min:3'
         ]);
+
 
         // We don't' need validate the authenticated user
 
@@ -48,10 +50,16 @@ class ProjectsController extends Controller
 
         // if(auth()->id() !== $project->owner_id)
         // just below is the alternative way of implementing the just above line
-        if(auth()->user()->isNot($project->owner))
-        {
-            abort(403, $message['abort']);
-        }
+
+        $this->authorize('update', $project);
+
+            //the auth check just below was removed when we switch to policy and
+            // register it in the authserviceprovider
+
+        // if(auth()->user()->isNot($project->owner))
+        // {
+        //     abort(403, $message['abort']);
+        // }
         // $project = Project::findOrFail(request('project'));
 
         return view('projects.show', compact('project'));
@@ -60,5 +68,22 @@ class ProjectsController extends Controller
     public function create()
     {
         return view('projects.create');
+    }
+
+    public function update(Project $project)
+    {
+
+            $this->authorize('update' , $project);
+
+            //the auth check just below was removed when we switch to policy and
+            // register it in the authserviceprovider
+        // if(auth()->user()->isNot($project->owner)){
+
+        //     abort(403);
+        // }
+
+        $project->update(request(['notes']));
+
+         return redirect($project->path());
     }
 }
