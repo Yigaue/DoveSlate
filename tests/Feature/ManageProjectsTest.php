@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Project;
+use Facades\Tests\Setup\ProjectFactory;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -99,32 +100,35 @@ class ManageProjectsTest extends TestCase
 
     public function a_user_can_update_a_project()
     {
-        $this->SignIn();
+       // $this->SignIn();
 
-        $this->withoutExceptionHandling();
+        $project = ProjectFactory::create();
 
-        $project = factory(Project::class)->create(['owner_id' => auth()->id()]);
+        // the code lline just below was refactored into
+        // tests/SetUp/ProjectFactor
 
-        $this->patch($project->path(), [
+        // $project = factory(Project::class)->create(['owner_id' => auth()->id()]);
 
-            'notes' => 'changed'
-        ])->assertRedirect($project->path());
+        $this->actingAs($project->owner)
 
-        $this->assertDatabaseHas('projects' , ['notes' => 'changed']);
+        ->patch($project->path(), $attributes = [ 'notes' => 'changed'])
+
+        ->assertRedirect($project->path());
+
+        $this->assertDatabaseHas('projects' , $attributes);
     }
 
     /** @test */
 
     public function a_user_can_view_their_project()
     {
-        $this->withoutExceptionHandling();
 
         // 'be' is same as actingAs: the signin user
-        $this->be(factory('App\User')->create());
+       // $this->be(factory('App\User')->create());
 
-        $project = factory('App\Project')->create(['owner_id' => auth()->id()]);
+        $project = ProjectFactory::create();
 
-        $this->get($project->path())
+        $this->actingAs($project->owner)->get($project->path())
         // $this->get('/projects/'.$project->id)
         ->assertSee($project->title)
         ->assertSee($project->description);
@@ -153,7 +157,7 @@ class ManageProjectsTest extends TestCase
 
         $project = factory('App\Project')->create();
 
-        $this->patch($project->path(), [])->assertStatus(403);
+        $this->patch($project->path())->assertStatus(403);
     }
 
 

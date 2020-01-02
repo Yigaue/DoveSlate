@@ -6,6 +6,11 @@ use App\Project;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Facades\Tests\Setup\ProjectFactory;
+use Facades\Tests\Setup\ProjectFactory as SetupProjectFactory;
+
+//use Tests\Setup\ProjectFactory;
+
 
 class ProjectTasksTest extends TestCase
 {
@@ -41,13 +46,15 @@ class ProjectTasksTest extends TestCase
    public function only_the_owner_of_a_project_may_update_task()
    {
 
-       $this->SignIn();
+        $this->SignIn();
 
-       $project = factory(Project::class)->create();
+        $project = SetupProjectFactory::withTasks()->create();
 
-       $task = $project->addTask('test task');
+    //    $project = factory(Project::class)->create();
 
-       $this->patch($task->path(), [
+    //    $task = $project->addTask('test task');
+
+       $this->patch($project->tasks[0]->path(), [
 
         'body' => 'changed',
        ])->assertStatus(403);
@@ -59,19 +66,21 @@ class ProjectTasksTest extends TestCase
    public function a_project_can_have_tasks()
    {
 
-        // from the alias we created in TestCase Class
-         $this->SignIn();
 
-         $project = auth()->user()->projects()->create(
+        // $this->SignIn(); // from the alias we created in TestCase Class
 
-            factory(Project::class)->raw()
-         );
+         $project = ProjectFactory::create();
+
+        //  $project = auth()->user()->projects()->create(
+
+        //     factory(Project::class)->raw()
+        //  );
 
          // this was the initial code, alternative just above
         // $project = factory(Project::class)->create(['owner_id' => auth()->id()]);
 
 
-         $this->post($project->path(). '/tasks', ['body' => 'Task test']);
+         $this->actingAs($project->owner)->post($project->path(). '/tasks', ['body' => 'Task test']);
 
          $this->get($project->path())->assertSee('Task test');
    }
@@ -80,17 +89,38 @@ class ProjectTasksTest extends TestCase
 
    public function a_task_can_be_updated()
    {
-      // $this->withoutExceptionHandling();
 
-       $this->signIn();
+      //$project =  app(ProjectFactory::class)
+     // ->ownedBy($this->SignIn()) // we use ActingAs when posting the project as below: ...$this->actingAs($project->owner)->patch...
+    //   ->withTasks()
+    //   ->create();
 
-       $project = auth()->user()->projects()->create(
+       $project =  ProjectFactory::withTasks()->create();
+       // we added 'Facades' to the path of the tests\Setup\ProjectFactory;
+       // like so: Facades\tests\Setup\ProjectFactory; so we can use it like its a facade
+
+
+
+
+
+        /*
+        |----------------------------------------------------
+        | This whole block of code just below was refactored into
+        | tests/SetUp/ProjectFactor
+        |----------------------------------------------------
+
+        $this->signIn();
+
+        $project = auth()->user()->projects()->create(
 
         factory(Project::class)->raw()
-    );
+        );
         $task = $project->addTask('test task');
 
-        $this->patch($task->path(), [
+     */
+
+        // $this->patch($project->path(). '/tasks/'. $project->tasks[0]->id, [
+        $this->actingAs($project->owner)->patch($project->tasks->first()->path(), [
             'body' => 'changed',
             'completed' => true,
         ]);
@@ -107,14 +137,16 @@ class ProjectTasksTest extends TestCase
 
    {
 
-    $this->signIn();
+    //$this->signIn();
 
-     $project = auth()->user()->projects()->create(
-    factory(Project::class)->raw()
-    );
+    $project = ProjectFactory::create();
+
+    //  $project = auth()->user()->projects()->create(
+    // factory(Project::class)->raw()
+    // );
 
     $attributes = factory('App\Task')->raw(['body' => '']);
 
-    $this->post($project->path() .'/tasks', $attributes)->assertSessionHasErrors('body');
+    $this->actingAs($project->owner)->post($project->path() .'/tasks', $attributes)->assertSessionHasErrors('body');
    }
 }
