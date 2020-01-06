@@ -20,12 +20,7 @@ class ProjectsController extends Controller
     public function store ()
     {
 
-       $attributes = request()->validate(
-        [
-            'title' => 'required',
-            'description' => 'required',
-            'notes'=> 'min:3'
-        ]);
+       $attributes = $this->validateRequest();
 
 
         // We don't' need validate the authenticated user
@@ -62,7 +57,15 @@ class ProjectsController extends Controller
         // }
         // $project = Project::findOrFail(request('project'));
 
+
+
         return view('projects.show', compact('project'));
+    }
+
+    public function edit(Project $project)
+
+    {
+        return view('projects.edit', compact('project'));
     }
 
     public function create()
@@ -82,8 +85,22 @@ class ProjectsController extends Controller
         //     abort(403);
         // }
 
-        $project->update(request(['notes']));
+         // $attributes = $this->validate();
+         // it's inline just below
+
+        $project->update($this->validateRequest());
 
          return redirect($project->path());
+    }
+
+    public function validateRequest()
+
+    {
+       return  request()->validate([
+                'title' => 'required',
+                'description' =>'required',
+                'notes' => 'min:3'
+            ]);
+
     }
 }

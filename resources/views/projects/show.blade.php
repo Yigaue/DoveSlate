@@ -10,7 +10,7 @@
 
         <a href="/projects" class="text-gray-700 text-sm font-normal no-underline"> My Projects</a> / {{$project->title}}
     </p>
-    <a href="/projects/create" class="button bg-blue-400 shadow-md hover:bg-blue-700 text-white font-bold py-2 px-4 rounded no-underline">New Project</a>
+<a href="{{$project->path() . '/edit'}}" class="button bg-blue-400 shadow-md hover:bg-blue-700 text-white font-bold py-2 px-4 rounded no-underline">Edit Project</a>
     </div>
 </header>
 
