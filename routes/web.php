@@ -1,5 +1,31 @@
 <?php
 
+
+/*
+ |--------------------------------------------------------
+ | Thd commented blog just below was created during testing
+ | for 'creating/updating_a_project_generates activities'
+ | it was later moved App/Observers/ProjectObserver class
+ |--------------------------------------------------------
+ */
+
+
+
+// \App\project::created(function ($project) {
+
+//     \App\Activity::create(['project_id' => $project->id,
+//                             'description' => 'created',
+//     ]);
+// });
+
+// \App\Project::updated(function ($project) {
+
+//     \App\Activity::create(['project_id' => $project->id,
+//                             'description' => 'updated',
+//     ]);
+// });
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,7 +37,7 @@
 |
 */
 
-Route::get('/', function () {
+route::get('/', function () {
     return view('welcome');
 });
 
@@ -42,4 +68,6 @@ Route::group(['middleware' => ['auth']], function () {
 });
 
 Auth::routes();
+
+
 

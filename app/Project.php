@@ -29,4 +29,11 @@ class Project extends Model
         //OR return $this->task()->create(['body' =>$body])
 
     }
+
+    public function activity()
+
+    {
+
+        return $this->hasMany(Activity::class);
+    }
 }
