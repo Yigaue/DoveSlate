@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use phpDocumentor\Reflection\Types\Integer;
 
 class Project extends Model
 {
@@ -25,7 +26,7 @@ class Project extends Model
 
     public function addTask($body)
     {
-        return $this->tasks()->create(compact('body'));
+       return $this->tasks()->create(compact('body'));
         //OR return $this->task()->create(['body' =>$body])
 
     }
@@ -36,4 +37,18 @@ class Project extends Model
 
         return $this->hasMany(Activity::class);
     }
+
+    // Not part of the project
+    // public function add($par1, $par2) {
+
+    //     return $par1 . " " . $par2;
+    // }
+
+    // public function multiply($x, $y){
+    //     if (!is_int($x) || !is_int($y)) {
+    //         return "we need ints";
+    //     }
+    //     return $x * $y;
+
+    // }
 }

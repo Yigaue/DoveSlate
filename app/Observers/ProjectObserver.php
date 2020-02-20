@@ -33,7 +33,7 @@ class ProjectObserver
     }
 
 
-    public function recordActivity($project, $type)
+    protected function recordActivity($project, $type)
 
     {
        Activity::create(['project_id' => $project->id,

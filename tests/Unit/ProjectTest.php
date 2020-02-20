@@ -37,4 +37,32 @@ class ProjectTest extends TestCase
 
         $this->assertCount(1, $project->tasks);
     }
+
+      /** @test */
+    // public function it_can_add_a_taska()
+    // {
+    //     $project = factory('App\Project')->create();
+
+    //     $this->assertEquals("Obi Mike", $project->add("Obi", "Mike"));
+    // }
+
+    //    /** @test */
+    //    public function it_can_add_a_task_multiply()
+    //    {
+    //        $project = factory('App\Project')->create();
+
+    //        $this->assertEquals(6, $project->multiply(2, 3));
+
+    //    }
+
+    //    /** @test */
+    //    public function it_can_add_a_task_multiply_invalid()
+    //    {
+    //        $project = factory('App\Project')->create();
+
+    //        $this->assertEquals("we need ints", $project->multiply("2", "3"));
+
+    //    }
+
+
 }

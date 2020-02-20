@@ -15,12 +15,11 @@ class ManageProjectsTest extends TestCase
     use WithFaker, RefreshDatabase;
 
 
-    /** @test */
+    /**
+     * @test
+     */
 
     public function guest_cannot_manage_projects()
-    //This test just above and below was rename after merging of the three guest related test into one
-    //public function guest_cannot_create_projects()
-
     {
         // this line just below was uncommented to and cast to array because
         // the diff between create() and raw() is raw() returns array while create() returns object
@@ -63,10 +62,11 @@ class ManageProjectsTest extends TestCase
     //     // $this->get($project->path())->assertRedirect('login');
     // }
 
-    /** @test */
+    /**
+     * @test
+     */
 
     public function a_user_can_create_a_project()
-
     {
 
         $this->withoutExceptionHandling();
@@ -91,18 +91,20 @@ class ManageProjectsTest extends TestCase
 
         $this->get($project->path())
 
-        ->assertSee($attributes['title'])
-        ->assertSee($attributes['description'])
-        ->assertSee($attributes['notes']);
+            ->assertSee($attributes['title'])
+            ->assertSee($attributes['description'])
+            ->assertSee($attributes['notes']);
 
 
     }
 
-    /** @test */
+    /**
+     * @test
+     */
 
     public function a_user_can_update_a_project()
     {
-       // $this->SignIn();
+        // $this->SignIn();
 
         $project = ProjectFactory::create();
 
@@ -113,32 +115,47 @@ class ManageProjectsTest extends TestCase
 
         $this->actingAs($project->owner)
 
-        ->patch($project->path(), $attributes = ['title' => 'changed', 'description' =>'changed','notes' => 'changed'])
+            ->patch($project->path(), $attributes = ['title' => 'changed', 'description' =>'changed','notes' => 'changed'])
 
-        ->assertRedirect($project->path());
+            ->assertRedirect($project->path());
 
         $this->get($project->path().'/edit')->assertStatus(200);
 
-        $this->assertDatabaseHas('projects' , $attributes);
+        $this->assertDatabaseHas('projects', $attributes);
+    }
+    /**
+     * @test
+     */
+    public function a_user_can_update_a_project_general_notes()
+    {
+        $project = ProjectFactory::create();
+        $this->actingAs($project->owner)
+            ->patch($project->path(), $attributes = ['notes' => 'changed']);
+        $this->get($project->path() . '/edit')->assertOk();
+        $this->assertDatabaseHas('projects', $attributes);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
 
     public function a_user_can_view_their_project()
     {
 
         // 'be' is same as actingAs: the signin user
-       // $this->be(factory('App\User')->create());
+        // $this->be(factory('App\User')->create());
 
         $project = ProjectFactory::create();
 
         $this->actingAs($project->owner)->get($project->path())
         // $this->get('/projects/'.$project->id)
-        ->assertSee($project->title)
-        ->assertSee($project->description);
+            ->assertSee($project->title)
+            ->assertSee($project->description);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
 
     public function an_authenticated_user_cannot_view_the_project_of_others()
     {
@@ -151,7 +168,9 @@ class ManageProjectsTest extends TestCase
         $this->get($project->path())->assertStatus(403);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
 
     public function an_authenticated_user_cannot_update_the_project_of_others()
     {
@@ -165,10 +184,11 @@ class ManageProjectsTest extends TestCase
     }
 
 
-    /** @test */
+    /**
+     * @test
+     */
 
     public function a_project_requires_a_title()
-
     {
         // the raw(['title=>'']) attached to the end of the factory overides the title attribute
         // in the factory('App\Project);
@@ -180,10 +200,11 @@ class ManageProjectsTest extends TestCase
         $this->post('/projects', $attributes)->assertSessionHasErrors('title');
     }
 
-    /** @test */
+    /**
+     * @test
+     */
 
     public function a_project_requires_a_description()
-
     {
         //Sign someone in
         $this->actingAs(factory('App\User')->create());
@@ -192,5 +213,7 @@ class ManageProjectsTest extends TestCase
 
         $this->post('/projects', $attributes)->assertSessionHasErrors('description');
     }
+
+
 
 }

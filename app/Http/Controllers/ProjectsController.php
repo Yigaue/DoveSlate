@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateProjectRequest;
 use App\Project;
 use Illuminate\Http\Request;
 
@@ -11,16 +12,16 @@ class ProjectsController extends Controller
     {
 
         $projects = auth()->user()->projects;
-     //$projects = Project::all();
+        //$projects = Project::all();
 
-    return view('projects.index', compact('projects'));
+        return view('projects.index', compact('projects'));
 
     }
 
-    public function store ()
+    public function store()
     {
 
-       $attributes = $this->validateRequest();
+        $attributes = $this->validateRequest();
 
 
         // We don't' need validate the authenticated user
@@ -39,7 +40,8 @@ class ProjectsController extends Controller
 
     public function show(Project $project)
     {
-        $message = ['abort' =>"Please this project belongs to someone, you're not allowed biko!"
+        $message = ['abort' =>"Please this project belongs to someone,
+                    you're not allowed biko!"
 
                     ];
 
@@ -73,10 +75,11 @@ class ProjectsController extends Controller
         return view('projects.create');
     }
 
-    public function update(Project $project)
+    public function update(UpdateProjectRequest $request, Project $project)
     {
 
-            $this->authorize('update' , $project);
+            // $this->authorize('update', $project);
+            // this was moved to formRequest class
 
             //the auth check just below was removed when we switch to policy and
             // register it in the authserviceprovider
@@ -88,19 +91,22 @@ class ProjectsController extends Controller
          // $attributes = $this->validate();
          // it's inline just below
 
-        $project->update($this->validateRequest());
+        $project->update($request->validated());
 
          return redirect($project->path());
     }
 
     public function validateRequest()
-
     {
-       return  request()->validate([
-                'title' => 'required',
-                'description' =>'required',
-                'notes' => 'min:3'
-            ]);
+        return  request()->validate(
+            [
+                'title' => 'sometimes|required',
+                'description' =>'sometimes|required',
+                'notes' => 'nullable'
+
+                //this was moved to formRequest class
+            ]
+        );
 
     }
 }
